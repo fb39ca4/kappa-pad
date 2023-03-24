@@ -4,7 +4,7 @@ _Todo_ Introductory video
 
 This version of the KappaPad is a customizable multi button keypad intended for general purposes. Unlike other keypads with mechanical switches, this keypad has fixed metal pads and uses capacitive sensing to determine when they are being pressed.
 
-![Keypad Image](images/full.png?raw=true)
+![Keypad Image](images/Full.png?raw=true)
 
 ## Usage
 
