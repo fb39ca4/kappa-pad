@@ -65,6 +65,7 @@ CapacitiveKey key7 = CapacitiveKey(18,5  ,20 ,KEY_F6    ,'x',0    );
 /*  Uncomment the #define line to enable testing mode
 This enables serial monitor output, to check the key readings values
 The keypad starts disabled, so no inputs will be sent unless you change the mode again. */
+
 //#define TESTING 
 
 void setup() 
