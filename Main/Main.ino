@@ -4,7 +4,7 @@
 
 /*
 In my case, I used an arduino leonardo, so if you need help with the pin numbers and properties,
-here's a pinout: https://ja-bots.com/wp-content/uploads/2019/06/arduino-leonardo4.png
+here's a pinout of it: https://ja-bots.com/wp-content/uploads/2019/06/arduino-leonardo4.png
 */
 
 //Pin definitions
@@ -23,7 +23,7 @@ and set the second parameter to LOW or HIGH for OFF and ON respectively */
 
 //Other variables
 extern const int NUMBER_OF_MODES = 4;     // Defines the number of modes that the keypad will have
-extern const int RGB_LED_MODE = 0;            // Defines the mode of the RGB LED (only changeable via here, code reupload needed)
+extern const int RGB_LED_MODE = 0;        // Defines the mode of the RGB LED (only changeable via here, code reupload needed)
 int MODE=0;                       // Control variable that cycles between the modes of the keypad (changeable by the switch)
 
 /* The variables declared with extern are global, used in the CapacitiveKey.h file aswell */
@@ -43,30 +43,39 @@ extern void setRgbLedColor(int red, int green, int blue){
   analogWrite(RGB_BLUE_LED_PIN, blue);
 } 
 
+
 //Here we include the file, after we declare all of the global variables (for scoping reasons)
 #include "capacitiveKey.h"
 
 //Keys ^
 
 /*   CapacitiveKey parameters in order
-(Send,Sense,led,Threshold,Key1,Key2,Key3) */
+(SendPin,Receive/SensePin,Threshold,KeyCode1,KeyCode2,KeyCode3) */
 
-// If you need to make changes to this function, go to the CapacitiveKey.h file
 /* Refer to this link https://github.com/arduino-libraries/Keyboard/blob/master/src/Keyboard.h for more keyCodes */
 
-CapacitiveKey key1 = CapacitiveKey(22,1  ,20 ,'z'      ,'s','x'    );
-CapacitiveKey key2 = CapacitiveKey(21,2  ,20 ,'x'     ,'d','c'   );
-CapacitiveKey key3 = CapacitiveKey(19,4  ,20 ,'p'     ,32,0   );
-CapacitiveKey key4 = CapacitiveKey(7,6   ,20 ,KEY_ESC    ,'o','n'  );
-CapacitiveKey key5 = CapacitiveKey(23,0  ,20 ,KEY_F7      ,'a',KEY_ESC   );
-CapacitiveKey key6 = CapacitiveKey(20,3  ,20 ,KEY_F2    ,32,0   );
-CapacitiveKey key7 = CapacitiveKey(18,5  ,20 ,KEY_F6    ,'x',0    );
+CapacitiveKey key1 = CapacitiveKey(22,1  ,20 ,'z'       ,'z'      ,'z'        );
+CapacitiveKey key2 = CapacitiveKey(21,2  ,20 ,'x'       ,'x'      ,'x'        );
+CapacitiveKey key3 = CapacitiveKey(19,4  ,20 ,KEY_KP_0        ,'c'      ,'c'        );
+CapacitiveKey key4 = CapacitiveKey(7,6   ,20 ,KEY_KP_DOT   ,'v'      ,'v'        );
+CapacitiveKey key5 = CapacitiveKey(23,0  ,20 ,KEY_F7    ,KEY_F7   ,'a'        );
+CapacitiveKey key6 = CapacitiveKey(20,3  ,20 ,KEY_F2    ,KEY_F2   ,'d'        );
+CapacitiveKey key7 = CapacitiveKey(18,5  ,20 ,KEY_ESC    ,KEY_ESC  ,KEY_ESC    );
 
 /*  Uncomment the #define line to enable testing mode
 This enables serial monitor output, to check the key readings values
-The keypad starts disabled, so no inputs will be sent unless you change the mode again. */
+The keypad starts disabled, so no inputs will be sent unless you change the mode again via the switch */
 
 //#define TESTING 
+
+//Custom function to detect when 2 keys are pressed at the same time
+void keyCollision(int vala, int valb,int r, int g, int b){
+    if((vala>8)  && (valb>8)){
+        setRgbLedColor(r, g, b);     
+    }else{
+      setRgbLedColor(0, 0, 0);   
+    }
+}
 
 void setup() 
 {
@@ -130,14 +139,18 @@ void loop()
   Serial.print(key7.sample);Serial.println();
   #endif
 
-  // Comment any of the keys if you need them to be disabled, but leave them instantiated on the Keys ^ part
+  // Comment any of the keys if you need to disable them, but leave them instantiated on the Keys ^ part
   key1.keyUpdate(MODE);
-  key2.keyUpdate(MODE);
   key3.keyUpdate(MODE);
+  keyCollision(key1.sample,key3.sample,125,0,0);
+  key2.keyUpdate(MODE);
   key4.keyUpdate(MODE);
+  keyCollision(key2.sample,key4.sample,0,0,20);
+
   key5.keyUpdate(MODE);
   key6.keyUpdate(MODE);
   key7.keyUpdate(MODE); 
+
 
   //Control of the Status LED
   if(MODE==NUMBER_OF_MODES-1){analogWrite(STATUS_LED_PIN, 15);}

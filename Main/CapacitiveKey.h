@@ -14,7 +14,6 @@ class CapacitiveKey
     unsigned int releaseTimer;  
     unsigned int treshold;  
     unsigned int sample;
-
   /*
   Constructor of the class
   Add more key parameters if you need more modes. 
@@ -40,7 +39,7 @@ class CapacitiveKey
     if (sample > treshold) 
     {
       if (keyReleased) 
-      {
+      {      
         switch(MODE)
         { 
           case (0):
